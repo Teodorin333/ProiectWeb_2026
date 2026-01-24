@@ -1,6 +1,6 @@
 var admin = require("firebase-admin");
 
-var serviceAccount = require("./proiect-tic-87381-firebase-adminsdk-fbsvc-6a363545a1.json");
+var serviceAccount = require("./proiect-tic-87381-firebase-adminsdk-fbsvc-e0a10e1863.json")
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -26,7 +26,5 @@ async function getPacientOne(db) {
 
 }
 
-module.exports = {
-  db,
-  getPacientOne
-};
+module.exports = db;            
+module.exports.getPacientOne = getPacientOne; 

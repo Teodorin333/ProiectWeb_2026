@@ -8,6 +8,12 @@ const logSlowRequests= require('./middleware/logSlowRequests');
 const userRouter = require('./userManagement/userRouter');
 const {db, getPacientOne} = require('./db_config/dbInit');
 const {loginUser} = require('./userManagement/userService');
+require("dotenv").config();
+
+const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
 
 app.use(httpLogger('dev'));
 

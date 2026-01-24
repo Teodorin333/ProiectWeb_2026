@@ -1,79 +1,96 @@
 const db = require('../db_config/dbInit')
+const JWT_SECRET = process.env.JWT_SECRET || "dev_secret";
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+
+
 
 const getAllUsers = (req, res) => {
     res.send('you want to get all users')
 } 
+
 const registerUser = async (req, res) => {
-    const { email, password } = req.body
+  const { name, email, password } = req.body;
 
-    const newUser = {
-        email: email,
-        password: password
-    }
-    try {
-        const addedUser = await db.collection('users').add(newUser)
+  try {
+    const exists = await db
+      .collection("pacienti")
+      .where("email", "==", email)
+      .limit(1)
+      .get();
 
-        // Get the data of the newly created document
-        const userDoc = await addedUser.get()
-        const userData = userDoc.data()
-        
-        console.log('New user ID:', addedUser.id)
-        console.log('New user data:', userData)
+    if (!exists.empty) return res.status(409).json({ error: "Email already in use" });
 
-        res.status(201).json({
-            id: addedUser.id,
-            ...userData
-        })
+    const passwordHash = await bcrypt.hash(password, 10);
 
-    } catch(error) {
-        res.status(500).send(JSON.stringify(error))
-    }
-
-} 
-const loginUser = async (req, res) => {
-    const { email, password } = req.body
-
-    const userToAuthenticate = {
-        email: email,
-        password: password
-    }
-
-    let auth = false
-
-    const querySnapshot = await db.collection('pacienti').where('email', '==', userToAuthenticate.email).limit(1).get();
-
-    querySnapshot.forEach(element => {
-        console.log('A user matching the email address has been found.')
-        const userData = element.data()
-
-        if (userData.password === userToAuthenticate.password) auth = true
+    const ref = await db.collection("pacienti").add({
+      name,
+      email,
+      passwordHash,
+      createdAt: new Date(),
     });
 
-    if (auth) {
-        res.status(200).send('sampleToken')
-    } else {
-        res.status(401).send('Unauthorized')
-    }
-}
+    // ✅ create token immediately (auto-login after register)
+    const token = jwt.sign(
+      { id: ref.id, email, role: "pacient", name },
+      JWT_SECRET,
+      { expiresIn: "2h" }
+    );
+
+    return res.status(201).json({ id: ref.id, name, email, token });
+  } catch (error) {
+    return res.status(500).json({ error: error.message || "Server error" });
+  }
+};
+
+
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const snap = await db.collection("pacienti").where("email", "==", email).limit(1).get();
+    if (snap.empty) return res.status(401).json({ error: "Unauthorized" });
+
+    const doc = snap.docs[0];
+    const pacient = doc.data();
+
+    const ok = await bcrypt.compare(password, pacient.passwordHash || "");
+    if (!ok) return res.status(401).json({ error: "Unauthorized" });
+
+    const token = jwt.sign(
+        { id: doc.id, email, role: "pacient", name: pacient.name || "" },
+        JWT_SECRET,
+        { expiresIn: "2h" }
+        );
+
+
+    return res.status(200).json({ token });
+  } catch (error) {
+    return res.status(500).json({ error: error.message || "Server error" });
+  }
+};
+
 
 const checkEmailNotInUse = async (email) => {
-    try {
-      const usersRef = db.collection('users');
-      const querySnapshot = await usersRef.where('email', '==', email).limit(1).get();
-  
-      if (!querySnapshot.empty) {
-        return Promise.reject('E-mail already in use');
-        // Email exists in the collection
-      }
+  try {
+    const querySnapshot = await db
+      .collection("pacienti")
+      .where("email", "==", email)
+      .limit(1)
+      .get();
 
-      return true
-
-    } catch (error) {
-      console.error("Error checking email:", error);
-      throw error; // or handle it as you see fit
+    if (!querySnapshot.empty) {
+      return Promise.reject("E-mail already in use");
     }
-    
+
+    return true;
+  } catch (error) {
+    console.error("Error checking email:", error);
+    throw error;
   }
+};
+
 
 module.exports = {
     getAllUsers,
