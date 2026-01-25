@@ -1,88 +1,164 @@
 <template>
-  <v-app-bar :elevation="2">
-    <template v-slot:prepend>
-    
-    </template>
+  <v-app-bar class="nav" :elevation="0">
+    <v-container class="nav-inner" fluid>
+      <!-- Left: Logo -->
+      <div class="left">
+        <router-link to="/" class="logo-wrap">
+          <v-img :src="logo" class="logo" contain height="44" width="96" />
+        </router-link>
+      </div>
 
-    <v-app-bar-title>
-      <v-img
-          :src="logo"
-          class="logo"
-          contain
-          height = "50"
-          width = "100"
-        />
-    </v-app-bar-title>
-    
-    <template v-if="loggedIn && userName">
-      <span class="link greeting">Bună {{ userName }}</span> |
-    </template>
+      <!-- Center/Right: Links -->
+      <div class="right">
+        <template v-if="loggedIn && userName">
+          <div class="pill greeting-pill">
+           Buna&nbsp;<strong>{{ userName }}</strong>
+          </div>
+        </template>
 
+        <router-link class="pill link-pill" to="/">
+          Acasă
+        </router-link>
 
+        <router-link
+          v-if="loggedIn && role === 'admin'"
+          class="pill link-pill"
+          to="/admin-studies"
+        >
+          Demarează studii
+        </router-link>
 
+        <router-link
+          v-if="loggedIn && role === 'pacient'"
+          class="pill link-pill"
+          to="/participa"
+        >
+          Detalii Pacient
+        </router-link>
 
-      <router-link class="link" to="/">Acasa</router-link> |
+        <template v-if="!loggedIn">
+          <router-link class="pill link-pill" to="/register">
+            Înregistrare
+          </router-link>
 
-      <router-link v-if="loggedIn && role === 'admin'" class="link" to="/admin-studies">
-        Demarează studii
-      </router-link>
-      <span v-if="loggedIn && role === 'admin'"> | </span>
+          <router-link class="pill link-pill primary-pill" to="/login">
+            Login
+          </router-link>
+        </template>
 
-
-      <!-- NEW: only pacient sees this -->
-      <router-link v-if="loggedIn && role === 'pacient'" class="link" to="/participa">
-        Detalii Pacient
-      </router-link>
-      <span v-if="loggedIn && role === 'pacient'"> | </span>
-      
-
-      <!-- NOT logged in -->
-      <template v-if="!loggedIn">
-        <router-link class="link" to="/register">Inregistrare</router-link> |
-        <router-link class="link" to="/login">Login</router-link>
-      </template>
-
-      <!-- Logged in -->
-      <template v-else>
-        <span class="link logout" @click="logout">Logout</span>
-      </template>
-
-
-
+        <template v-else>
+          <button class="pill link-pill logout-pill" @click="logout">
+            Logout
+          </button>
+        </template>
+      </div>
+    </v-container>
   </v-app-bar>
-
-
-
 </template>
 
+
 <style scoped>
-.v-app-bar {
-  font-family:Arial, Helvetica, sans-serif;
-  color: black; 
-  font-weight: bold;
-  text-decoration-style: none;
-  background-image: url(@/assets/Banner.png);
+/* app bar */
+.nav {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.78));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(30, 41, 59, 0.08);
+}
+
+/* keep your banner image feel, but subtle */
+.nav::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("@/assets/Banner.png");
   background-repeat: no-repeat;
-  }
-
-.link{
-  margin: 10px;
-  font-size: 20px;
+  background-position: center;
+  background-size: cover;
+  opacity: 0.10; /* subtle */
+  pointer-events: none;
 }
 
-.logout {
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+/* logo area */
+.logo-wrap {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+.logo {
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.08));
+}
+
+/* right side */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* pills */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 15px;
+  line-height: 1;
+  text-decoration: none;
+  border: 1px solid rgba(30, 41, 59, 0.10);
+  background: rgba(255, 255, 255, 0.75);
+  color: #111827;
+  transition: transform 120ms ease, filter 120ms ease, background 120ms ease;
+}
+
+.link-pill:hover {
+  filter: brightness(0.98);
+  transform: translateY(-1px);
+}
+
+/* greeting */
+.greeting-pill {
+  border: 1px solid rgba(101, 91, 129, 0.22);
+  background: rgba(101, 91, 129, 0.10);
+}
+
+/* primary action */
+.primary-pill {
+  background: #655b81;
+  color: white;
+  border: 1px solid rgba(101, 91, 129, 0.65);
+  font-weight: 800;
+}
+.primary-pill:hover {
+  filter: brightness(0.95);
+}
+
+/* logout button (button styled like link-pill) */
+.logout-pill {
   cursor: pointer;
+  background: rgba(255, 255, 255, 0.75);
 }
 
-.logout:hover {
-  text-decoration: underline;
+/* make router-link active look nice */
+.router-link-active.link-pill {
+  border-color: rgba(101, 91, 129, 0.45);
+  background: rgba(101, 91, 129, 0.12);
 }
-.greeting {
-  font-weight: bold;
-}
-
-
 </style>
+
 
 <script>
 import logo from "@/assets/sanofi_logo.png";

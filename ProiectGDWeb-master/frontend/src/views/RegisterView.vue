@@ -1,60 +1,92 @@
 <template>
-  <div class="container">
-    <v-card class="card" max-width="344">
-<v-form v-model="form" @submit.prevent="onSubmit">
+  <div class="register-page">
+    <v-container class="py-12" style="max-width: 560px;">
+      <v-card class="register-card" elevation="8">
+        <!-- Header -->
+        <div class="register-header">
+          <div class="text-h5 font-weight-bold">Creare cont</div>
+          <div class="text-body-2 register-subtitle">
+            Completează datele pentru a te înregistra ca pacient.
+          </div>
+        </div>
 
-<v-text-field
-  v-model="name"
-  :readonly="loading"
-  :rules="[required]"
-  label="Name"
-  clearable
-/>
+        <v-divider />
 
-  <v-text-field
-    v-model="email"
-    :readonly="loading"
-    :rules="[required, validEmail]"
-    label="Email"
-    class="mb-2"
-    clearable
-  />
+        <v-card-text class="pt-6">
+          <v-alert v-if="errorMessage" type="error" variant="tonal" class="mb-4">
+            {{ errorMessage }}
+          </v-alert>
 
-  <v-text-field
-    v-model="password"
-    :readonly="loading"
-    :rules="[required, min8]"
-    label="Parola"
-    type="password"
-    class="mb-2"
-    clearable
-  />
+          <v-alert v-if="successMessage" type="success" variant="tonal" class="mb-4">
+            {{ successMessage }}
+          </v-alert>
 
-  <v-btn
-    :disabled="!form"
-    :loading="loading"
-    color="success"
-    type="submit"
-    block
-  >
-    Register
-  </v-btn>
-</v-form>
+          <v-form v-model="form" @submit.prevent="onSubmit">
+            <v-text-field
+              v-model="name"
+              :readonly="loading"
+              :rules="[required]"
+              label="Nume"
+              variant="outlined"
+              density="comfortable"
+              clearable
+              prepend-inner-icon="mdi-account-outline"
+              class="mb-3"
+            />
 
-    </v-card>
+            <v-text-field
+              v-model="email"
+              :readonly="loading"
+              :rules="[required, validEmail]"
+              label="Email"
+              variant="outlined"
+              density="comfortable"
+              clearable
+              prepend-inner-icon="mdi-email-outline"
+              class="mb-3"
+            />
 
-    <v-alert v-if="errorMessage" type="error" variant="tonal" class="mb-3">
-  {{ errorMessage }}
-</v-alert>
+            <v-text-field
+              v-model="password"
+              :readonly="loading"
+              :rules="[required, min8]"
+              label="Parolă"
+              type="password"
+              variant="outlined"
+              density="comfortable"
+              clearable
+              prepend-inner-icon="mdi-lock-outline"
+              class="mb-2"
+            />
 
-<v-alert v-if="successMessage" type="success" variant="tonal" class="mb-3">
-  {{ successMessage }}
-</v-alert>
+            <v-btn
+              :disabled="!form"
+              :loading="loading"
+              class="register-btn mt-4"
+              type="submit"
+              block
+              size="large"
+            >
+              Register
+            </v-btn>
 
-</div>
+            <div class="mt-5 text-body-2 login-row">
+              <span>Ai deja cont?</span>
+              <router-link to="/login" class="login-link">
+                Login
+              </router-link>
+            </div>
+          </v-form>
+        </v-card-text>
+      </v-card>
 
-<p class="copyright">© Anofi 2004-2025 - All rights reserved</p>
+      <p class="copyright mt-8">
+        © Anofi 2004-2025 - All rights reserved
+      </p>
+    </v-container>
+  </div>
 </template>
+
 
 <script>
 export default {
@@ -149,31 +181,65 @@ export default {
 
 
 <style scoped>
-.form{
+.register-page {
+  min-height: calc(100vh - 64px);
   display: flex;
-  flex-direction: column; 
-  width: 100%;
+  align-items: center;
+  background:
+    radial-gradient(900px 500px at 20% 10%, rgba(101, 91, 129, 0.18), transparent 60%),
+    radial-gradient(700px 400px at 80% 20%, rgba(30, 136, 229, 0.14), transparent 55%),
+    #f6f7fb;
 }
 
-.card{
-  padding: 20px;
-  width: 500px;
-  max-width: 100%;
-  height: auto;          
+.register-card {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(30, 41, 59, 0.08);
 }
 
-
-.container{
-  display: grid;
-  justify-content: center; 
-  align-items: center;  
-  height: 80vh;
-  width: 100vw;
-  background-color: #ece4f7;
+.register-header {
+  padding: 22px 24px 16px 24px;
+  background: linear-gradient(180deg, rgba(101, 91, 129, 0.08), rgba(255, 255, 255, 0));
 }
 
-.copyright{
-  padding-top: 40px;
+.register-subtitle {
+  opacity: 0.8;
+  margin-top: 4px;
+}
+
+.register-btn {
+  background-color: #655b81;
+  color: white;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  border-radius: 12px;
+}
+
+.register-btn:hover {
+  filter: brightness(0.95);
+}
+
+.login-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
+}
+
+.login-link {
+  text-decoration: none;
+  font-weight: 700;
+  color: #655b81;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
+
+.copyright {
   text-align: center;
+  opacity: 0.75;
 }
 </style>
+
