@@ -18,12 +18,15 @@ const jwt = require("jsonwebtoken");
 app.use(httpLogger('dev'));
 
 const corsOptions = {
-  origin: 'http://localhost:8080',
-  methods: 'GET,POST',
-  allowedHeaders: 'Content-Type',
-  credentials: true
+  origin: "http://localhost:8080",
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
 };
-app.use(cors(corsOptions)); //see more at https://www.npmjs.com/package/cors
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // ✅ handle preflight properly
+
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json()) //we expect JSON data to be sent as payloads
 app.use(logSlowRequests(100));
@@ -51,6 +54,8 @@ app.post('/data', (req, res) => {
   console.log('trying to post the following data: ', user)
   res.send('Succes')
 });
+
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}!`)

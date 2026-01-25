@@ -24,16 +24,58 @@
 
   <v-col class="exposure">
     <v-card class="Expo" title="Misiunea noastra - Un mediu sigur" text="Pentru noi, sanatatea nu este doar un scop, ci un angajament. Suntem in continua cautare de metode noi si sigure pentru a inova domeniul studiului de cercetare farmaceutic. Astfel, tratamentele dezvoltate de noi sunt de cea mai inalta calitate."></v-card>
-    <v-card class="Expo" title="Deschisi la talente noi" text="Echipele noastre intotdeauna ar beneficia de tineri cercetatori dornici sa ni se alature. Daca esti interesat de o pozitie la Anofi, aplica azi!">
-      <v-card-actions>
-    <v-btn to="/cariere">Aplica acum</v-btn>
+
+    <v-card
+    v-if="isPacient"
+    class="Expo"
+    title="Studii Valabile"
+    text="Descoperă studiile clinice disponibile și înscrie-te rapid."
+  >
+    <v-card-actions>
+      <v-btn to="/studii">Descoperă Studiile</v-btn>
+    </v-card-actions>
+  </v-card>
+
+
+    <!-- Doctor only -->
+<v-card
+  v-if="isDoctor"
+  class="Expo"
+  title="Studii în derulare"
+  text="Vezi toate studiile active și gestionează informațiile aferente."
+>
+  <v-card-actions>
+    <v-btn to="/studii-derulare">Vezi studiile</v-btn>
   </v-card-actions>
-    </v-card>
-    <v-card class="Expo" title="Programul Safe & Private" text="Programul nostru pentru a facilita studiile clinice este aici. In cazul in care esti deja inscris, tot ce trebuie sa faci este sa iti introduci credentialele">
-      <v-card-actions>
-    <v-btn to="/register">Login</v-btn>
+</v-card>
+
+<!-- Admin only -->
+<v-card
+  v-if="isAdmin"
+  class="Expo"
+  title="Demarează studii"
+  text="Pornește un studiu clinic. După pornire, medicii nu îl mai pot modifica."
+>
+  <v-card-actions>
+    <v-btn to="/admin-studies">Demarează</v-btn>
   </v-card-actions>
-    </v-card>
+</v-card>
+
+
+<!-- Not logged in (optional card to guide users) -->
+<v-card
+  v-else-if="!isLoggedIn"
+  class="Expo"
+  title="Programul Safe & Private"
+  text="Autentifică-te pentru a accesa funcționalitățile platformei."
+>
+  <v-card-actions>
+    <v-btn to="/login">Login</v-btn>
+  </v-card-actions>
+</v-card>
+
+
+
   </v-col>
 
   <p class="copyright">© Anofi 2004-2025 - All rights reserved</p>
@@ -92,13 +134,75 @@
 </style>
 
 <script>
-
 export default {
-  name: 'HelloWorld',
+  name: "HelloWorld",
 
-  data: () => ({
-    
-    
-  }),
-}
+  data() {
+    return {
+      refreshKey: 0
+    };
+  },
+
+  mounted() {
+    window.addEventListener("storage", this.bumpRefresh);
+    window.addEventListener("auth-changed", this.bumpRefresh);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener("storage", this.bumpRefresh);
+    window.removeEventListener("auth-changed", this.bumpRefresh);
+  },
+
+  computed: {
+    token() {
+      this.refreshKey; // force recompute
+      return localStorage.getItem("token");
+    },
+
+    isLoggedIn() {
+  return !!this.token;
+},
+
+loginRedirect() {
+  return this.isLoggedIn ? "/participa" : "/login";
+},
+
+    role() {
+      if (!this.token) return "";
+      try {
+        const payloadPart = this.token.split(".")[1];
+        if (!payloadPart) return "";
+
+        const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
+        const padded = base64.padEnd(base64.length + (4 - (base64.length % 4)) % 4, "=");
+        const payload = JSON.parse(atob(padded));
+
+        return payload.role || "";
+      } catch (e) {
+        return "";
+      }
+    },
+
+    isPacient() {
+      return this.role === "pacient";
+    },
+
+    isDoctor() {
+  return this.role === "doctor";
+  },
+  
+  isAdmin() {
+  return this.role === "admin";
+},
+
+
+  },
+
+  methods: {
+    bumpRefresh() {
+      this.refreshKey++;
+    }
+  }
+};
 </script>
+

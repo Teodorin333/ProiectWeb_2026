@@ -14,12 +14,27 @@
         />
     </v-app-bar-title>
     
-    <span v-if="loggedIn && userName" class="link greeting">Bună {{ userName }}</span> |
+    <template v-if="loggedIn && userName">
+      <span class="link greeting">Bună {{ userName }}</span> |
+    </template>
+
 
 
 
       <router-link class="link" to="/">Acasa</router-link> |
-      <router-link class="link" to="/cariere">Cariere</router-link> |
+
+      <router-link v-if="loggedIn && role === 'admin'" class="link" to="/admin-studies">
+        Demarează studii
+      </router-link>
+      <span v-if="loggedIn && role === 'admin'"> | </span>
+
+
+      <!-- NEW: only pacient sees this -->
+      <router-link v-if="loggedIn && role === 'pacient'" class="link" to="/participa">
+        Detalii Pacient
+      </router-link>
+      <span v-if="loggedIn && role === 'pacient'"> | </span>
+      
 
       <!-- NOT logged in -->
       <template v-if="!loggedIn">
@@ -120,7 +135,25 @@ export default {
       } catch (e) {
         return "";
       }
+    },
+
+    role() {
+      if (!this.token) return "";
+
+      try {
+        const payloadPart = this.token.split(".")[1];
+        if (!payloadPart) return "";
+
+        const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
+        const padded = base64.padEnd(base64.length + (4 - (base64.length % 4)) % 4, "=");
+        const payload = JSON.parse(atob(padded));
+
+        return payload.role || "";
+      } catch (e) {
+        return "";
+      }
     }
+
   },
 
   methods: {

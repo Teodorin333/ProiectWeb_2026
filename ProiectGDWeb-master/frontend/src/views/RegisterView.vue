@@ -156,12 +156,12 @@ export default {
 }
 
 .card{
-  padding: 20px; 
+  padding: 20px;
   width: 500px;
-  max-width: 100%; 
-  height: 250px;
-  max-height: 100%;
+  max-width: 100%;
+  height: auto;          
 }
+
 
 .container{
   display: grid;
