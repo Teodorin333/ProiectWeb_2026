@@ -101,7 +101,7 @@ export default {
         }
 
         this.success = true;
-        await this.load(); // refresh list so started updates
+        await this.load(); 
       } catch {
         this.error = "Nu pot porni studiul.";
       } finally {

@@ -16,7 +16,7 @@
               Gestionare studii, înscriere participanți și fluxuri controlate pentru pacienți, medici și administratori.
             </p>
 
-            <!-- role-based primary action -->
+            
             <div class="d-flex flex-wrap ga-3 mt-6">
               <v-btn
                 v-if="!isLoggedIn"
@@ -59,7 +59,7 @@
           </v-col>
 
           <v-col cols="12" md="5" class="d-flex justify-center">
-            <!-- Use your carousel images as a "soft" hero visual -->
+           
             <div class="hero-visual">
               <v-carousel
               height="280"
@@ -99,10 +99,10 @@
       </v-container>
     </section>
 
-    <!-- CONTENT -->
+  
     <section class="section">
       <v-container class="content-container">
-        <!-- Mission card -->
+        
         <v-card class="card-soft mb-6" elevation="0">
           <div class="card-title">Misiunea noastră - Un mediu sigur</div>
           <div class="card-text">
@@ -112,7 +112,7 @@
           </div>
         </v-card>
 
-        <!-- Role cards grid -->
+       
         <v-row dense>
           <!-- pacient -->
           <v-col cols="12" md="4" v-if="isPacient">
@@ -178,7 +178,7 @@
   background: #ffffff;
 }
 
-/* HERO (light) */
+
 .hero {
   background: radial-gradient(900px circle at 20% 10%, rgba(101, 91, 129, 0.12), transparent 60%),
               linear-gradient(180deg, #ffffff, #f6f7fb);
@@ -218,7 +218,7 @@
   max-width: 620px;
 }
 
-/* Hero visual */
+
 .hero-visual {
   width: 100%;
   max-width: 460px;
@@ -229,7 +229,7 @@
   border: 1px solid rgba(17, 24, 39, 0.08);
 }
 
-/* CONTENT SECTION */
+
 .section {
   background: #f6f7fb;
   padding: 28px 0 48px 0;
@@ -239,7 +239,7 @@
   max-width: 1200px;
 }
 
-/* Cards */
+
 .card-soft {
   padding: 22px 22px;
   border-radius: 18px;
@@ -261,7 +261,7 @@
   color: #4b5563;
 }
 
-/* Buttons */
+
 .btn-primary {
   background: #655b81;
   color: white;
@@ -278,7 +278,7 @@
   font-weight: 800;
 }
 
-/* Footer */
+
 .footer-note {
   text-align: center;
   margin-top: 26px;
@@ -310,7 +310,7 @@ export default {
 
   computed: {
     token() {
-      this.refreshKey; // force recompute
+      this.refreshKey; 
       return localStorage.getItem("token");
     },
 

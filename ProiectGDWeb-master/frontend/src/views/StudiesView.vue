@@ -25,17 +25,17 @@
     class="study-col"
   >
     <v-card class="study-card" elevation="2">
-      <!-- Title: medication -->
+     
       <div class="text-h5 font-weight-bold">
         {{ s.medicament }}
       </div>
 
-      <!-- Afectiune -->
+     
       <div class="text-body-1 mt-3">
         <strong>Afectiune:</strong> {{ s.afectiune }}
       </div>
 
-      <!-- Descriere -->
+    
       <div class="text-body-1 mt-2">
         <strong>Descriere:</strong> {{ s.descriere }}
       </div>
@@ -51,7 +51,7 @@
 
 
 
-    <!-- success dialog -->
+    
     <v-dialog v-model="successDialog" max-width="520">
       <v-card class="pa-4">
         <div class="text-h6">Succes</div>
@@ -63,7 +63,7 @@
       </v-card>
     </v-dialog>
 
-    <!-- confirm switch dialog -->
+    
     <v-dialog v-model="confirmDialog" max-width="650">
       <v-card class="pa-4">
         <div class="text-h6">Confirmare</div>
@@ -81,7 +81,7 @@
       </v-card>
     </v-dialog>
 
-    <!-- study started dialog -->
+    
 <v-dialog v-model="startedDialog" max-width="700">
   <v-card class="pa-4">
     <div class="text-h6">Studiu în desfășurare</div>
@@ -112,7 +112,7 @@ export default {
       error: "",
       loading: false,
 
-      // dialogs
+     
       successDialog: false,
       enrolledStudyName: "",
       startedDialog: false,
@@ -163,10 +163,10 @@ export default {
     if (me.studyStarted) {
       this.lockedByStartedStudy = true;
       this.startedStudyName = me.studyName || "acest studiu";
-      this.startedDialog = true; // reuse your existing popup
+      this.startedDialog = true; 
     }
   } catch (e) {
-    // ignore
+    
   }
 },
 
@@ -187,7 +187,7 @@ export default {
       this.loading = true;
 
       try {
-        // if study already started -> show info dialog (backend also blocks)
+       
         if (study.started) {
         this.startedStudyName = study.name || `${study.afectiune} - ${study.medicament}`;
         this.startedDialog = true;
@@ -207,7 +207,7 @@ export default {
 
         const data = await res.json();
 
-        // ✅ NEW: pacient is locked in an already-started study
+        
         if (res.status === 423 && data.error === "already_in_started_study") {
         this.lockedByStartedStudy = true;
         this.startedStudyName = data.studyName || "acest studiu";
@@ -223,7 +223,7 @@ export default {
         }
 
 
-        // already enrolled -> open confirm dialog
+        
         if (res.status === 409 && data.error === "already_enrolled") {
           this.currentStudyName = data.currentStudyName || "studiul curent";
           this.targetStudyName = data.targetStudyName || study.name;
@@ -281,7 +281,7 @@ export default {
 
 <style scoped>
 .study-col {
-  max-width: 900px; /* makes each card wide & centered */
+  max-width: 900px; 
 }
 
 .study-card {
@@ -291,7 +291,7 @@ export default {
 }
 
 .participa-btn {
-  background-color: #655b81; /* purple */
+  background-color: #655b81;
   color: white;
   font-weight: 700;
 }
@@ -302,7 +302,7 @@ export default {
 
 .header-block {
   max-width: 900px;
-  margin: 0 auto 24px auto; /* center + space below */
+  margin: 0 auto 24px auto; 
 }
 
 .header-block h2 {

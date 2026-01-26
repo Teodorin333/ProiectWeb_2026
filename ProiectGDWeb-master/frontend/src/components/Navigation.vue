@@ -1,14 +1,14 @@
 <template>
   <v-app-bar class="nav" :elevation="0">
     <v-container class="nav-inner" fluid>
-      <!-- Left: Logo -->
+      
       <div class="left">
         <router-link to="/" class="logo-wrap">
           <v-img :src="logo" class="logo" contain height="44" width="96" />
         </router-link>
       </div>
 
-      <!-- Center/Right: Links -->
+     
       <div class="right">
         <template v-if="loggedIn && userName">
           <div class="pill greeting-pill">
@@ -58,7 +58,7 @@
 
 
 <style scoped>
-/* app bar */
+
 .nav {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.78));
@@ -67,7 +67,7 @@
   border-bottom: 1px solid rgba(30, 41, 59, 0.08);
 }
 
-/* keep your banner image feel, but subtle */
+
 .nav::before {
   content: "";
   position: absolute;
@@ -76,7 +76,7 @@
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
-  opacity: 0.10; /* subtle */
+  opacity: 0.10; 
   pointer-events: none;
 }
 
@@ -89,7 +89,7 @@
   z-index: 1;
 }
 
-/* logo area */
+
 .logo-wrap {
   display: inline-flex;
   align-items: center;
@@ -99,7 +99,7 @@
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.08));
 }
 
-/* right side */
+
 .right {
   display: flex;
   align-items: center;
@@ -108,7 +108,7 @@
   justify-content: flex-end;
 }
 
-/* pills */
+
 .pill {
   display: inline-flex;
   align-items: center;
@@ -129,13 +129,13 @@
   transform: translateY(-1px);
 }
 
-/* greeting */
+
 .greeting-pill {
   border: 1px solid rgba(101, 91, 129, 0.22);
   background: rgba(101, 91, 129, 0.10);
 }
 
-/* primary action */
+
 .primary-pill {
   background: #655b81;
   color: white;
@@ -146,13 +146,13 @@
   filter: brightness(0.95);
 }
 
-/* logout button (button styled like link-pill) */
+
 .logout-pill {
   cursor: pointer;
   background: rgba(255, 255, 255, 0.75);
 }
 
-/* make router-link active look nice */
+
 .router-link-active.link-pill {
   border-color: rgba(101, 91, 129, 0.45);
   background: rgba(101, 91, 129, 0.12);
@@ -169,12 +169,12 @@ export default {
   data() {
     return {
       logo,
-      refreshKey: 0, // used only to force re-render when auth changes
+      refreshKey: 0, 
     };
   },
 
   mounted() {
-    // Forces computed props to re-evaluate when auth changes
+    
     window.addEventListener("storage", this.bumpRefresh);
     window.addEventListener("auth-changed", this.bumpRefresh);
   },
@@ -185,7 +185,7 @@ export default {
   },
 
   computed: {
-    // depends on refreshKey so it re-checks after events
+    
     token() {
       this.refreshKey;
       return localStorage.getItem("token");

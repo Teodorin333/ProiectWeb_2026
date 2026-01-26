@@ -84,7 +84,7 @@ export default {
     },
 
     async loadStudyTitle() {
-      // We can reuse /doctor/studies and find the matching study
+      
       try {
         const token = this.getToken();
         const res = await fetch("http://localhost:3000/doctor/studies", {
@@ -96,7 +96,7 @@ export default {
         const study = (data.studies || []).find(s => s.id === this.getStudyId());
         this.medicamentTitle = study?.medicament || study?.name || "—";
       } catch {
-        // ignore; title just stays —
+        
       }
     },
 
@@ -126,7 +126,7 @@ export default {
     },
 
     async updatePlacebo(pacient, val) {
-      // optimistic already applied because v-model updated
+     
       try {
         const token = this.getToken();
         const res = await fetch(`http://localhost:3000/doctor/pacienti/${pacient.id}/placebo`, {
@@ -142,7 +142,7 @@ export default {
         if (!res.ok) {
           this.snackbarText = data.error || "Eroare la setare placebo.";
           this.snackbar = true;
-          // rollback UI
+          
           pacient.placebo = !val;
           return;
         }
@@ -152,7 +152,7 @@ export default {
       } catch {
         this.snackbarText = "Eroare la setare placebo.";
         this.snackbar = true;
-        // rollback UI
+        
         pacient.placebo = !val;
       }
     },
@@ -172,7 +172,7 @@ export default {
           return;
         }
 
-        // remove from list immediately
+       
         this.participants = this.participants.filter(x => x.id !== pacient.id);
 
         this.snackbarText = "Pacient eliminat din studiu.";

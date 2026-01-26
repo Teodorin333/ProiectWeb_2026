@@ -31,7 +31,7 @@ const registerUser = async (req, res) => {
       createdAt: new Date(),
     });
 
-    // ✅ create token immediately (auto-login after register)
+
     const token = jwt.sign(
       { id: ref.id, email, role: "pacient", name },
       JWT_SECRET,
@@ -44,7 +44,6 @@ const registerUser = async (req, res) => {
   }
 };
 
-// helper: find first user by email in a collection
 const findByEmail = async (collectionName, email) => {
   const snap = await db.collection(collectionName).where("email", "==", email).limit(1).get();
   if (snap.empty) return null;
@@ -57,7 +56,7 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // 1) try pacient
+   
     const pacient = await findByEmail("pacienti", email);
     if (pacient) {
       const ok = await bcrypt.compare(password, pacient.data.passwordHash || "");
@@ -77,7 +76,7 @@ const loginUser = async (req, res) => {
       return res.status(200).json({ token });
     }
 
-    // 2) try doctor (DB has plain text field: password, name field: nume)
+   
     const doctor = await findByEmail("doctori", email);
     if (doctor) {
       const ok = password === (doctor.data.password || "");
@@ -97,7 +96,7 @@ const loginUser = async (req, res) => {
       return res.status(200).json({ token });
     }
 
-    // 3) try admin (same pattern as doctor)
+   
     const admin = await findByEmail("admini", email);
     if (admin) {
       const ok = password === (admin.data.password || "");
@@ -117,7 +116,7 @@ const loginUser = async (req, res) => {
       return res.status(200).json({ token });
     }
 
-    // if not found in any collection
+   
     return res.status(401).json({ error: "Unauthorized" });
   } catch (error) {
     return res.status(500).json({ error: error.message || "Server error" });
@@ -130,7 +129,7 @@ const getMe = async (req, res) => {
     const { id, role } = req.user;
 
     if (role !== "pacient") {
-      // If later you want doctors/admins too, you can branch here.
+      
       return res.status(403).json({ error: "Forbidden" });
     }
 
@@ -154,7 +153,7 @@ const getMe = async (req, res) => {
       }
 
 
-    // Return only what frontend needs
+   
    return res.json({
   id,
   name: data.name || "",
@@ -186,7 +185,7 @@ const updatePacientStudyInfo = async (req, res) => {
       acceptedTerms,
     } = req.body;
 
-    // Basic server-side validation (frontend also validates)
+    
     if (!dateOfBirth) return res.status(400).json({ error: "dateOfBirth is required" });
     if (!studyId) return res.status(400).json({ error: "studyId is required" });
     if (typeof affectedGroup !== "boolean") return res.status(400).json({ error: "affectedGroup must be boolean" });
@@ -195,11 +194,11 @@ const updatePacientStudyInfo = async (req, res) => {
     const docRef = db.collection("pacienti").doc(id);
 
     await docRef.update({
-      dateOfBirth,         // store as "YYYY-MM-DD" string for simplicity
-      studyId,             // id of the study
-      allergies,           // optional
-      affectedGroup,       // boolean
-      acceptedTerms,       // boolean
+      dateOfBirth,        
+      studyId,             
+      allergies,           
+      affectedGroup,       
+      acceptedTerms,       
       updatedAt: new Date()
     });
 
@@ -209,8 +208,8 @@ const updatePacientStudyInfo = async (req, res) => {
   }
 };
 
-// ✅ Get studies from Firestore collection: "studiu"
-// ✅ Get studies from Firestore collection: "studiu"
+
+
 const getStudies = async (req, res) => {
   try {
     const snap = await db.collection("studiu").get();
@@ -233,7 +232,7 @@ const getStudies = async (req, res) => {
 };
 
       })
-      // sort nicely (by medicament, then afectiune)
+      
       .sort((a, b) => {
         const m = (a.medicament || "").localeCompare(b.medicament || "");
         if (m !== 0) return m;
@@ -263,7 +262,7 @@ const targetStudyStarted = !!targetStudyData.started;
 
 const targetStudyName = `${(targetStudyData.afectiune || "").trim()} - ${(targetStudyData.medicament || "").trim()}`.trim();
 
-// If started -> do not allow enroll/switch
+
 if (targetStudyStarted) {
   return res.status(423).json({
     error: "study_started",
@@ -280,7 +279,7 @@ if (targetStudyStarted) {
     const pacientData = pacientSnap.data() || {};
     const currentStudyId = pacientData.studyId || "";
 
-    // ✅ NEW: if pacient is already in a started study -> they cannot switch anymore
+    
 if (currentStudyId) {
   const currentStudySnap = await db.collection("studiu").doc(currentStudyId).get();
   if (currentStudySnap.exists) {
@@ -298,9 +297,9 @@ if (currentStudyId) {
 }
 
 
-    // If already enrolled in a different study and not forcing -> tell frontend
+    
     if (currentStudyId && currentStudyId !== studyId && force !== true) {
-      // load current + target names for message
+      
       const currentStudySnap = await db.collection("studiu").doc(currentStudyId).get();
       const targetStudySnap = await db.collection("studiu").doc(studyId).get();
 
@@ -319,16 +318,16 @@ if (currentStudyId) {
       });
     }
 
-    // enroll / switch
+    
     await pacientRef.update({
   studyId,
-  placebo: false,          // ✅ default added on enroll
+  placebo: false,          
   enrolledAt: new Date(),
   updatedAt: new Date(),
 });
 
 
-    // load enrolled study name to display
+    
     const studySnap = await db.collection("studiu").doc(studyId).get();
     const s = studySnap.exists ? studySnap.data() : {};
     const studyName = `${s?.afectiune || ""} - ${s?.medicament || ""}`.trim();
@@ -359,7 +358,7 @@ const checkEmailNotInUse = async (email) => {
   }
 };
 
-// ✅ Doctor: list studies (same DB source as pacient list, but protected route)
+
 const getStudiesForDoctor = async (req, res) => {
   try {
     const snap = await db.collection("studiu").get();
@@ -390,7 +389,7 @@ const getStudiesForDoctor = async (req, res) => {
   }
 };
 
-// ✅ Doctor: get participants enrolled in a study
+
 const getStudyParticipants = async (req, res) => {
   try {
     const { studyId } = req.params;
@@ -416,7 +415,7 @@ const getStudyParticipants = async (req, res) => {
   }
 };
 
-// ✅ Doctor: set placebo flag for a pacient
+
 const setPacientPlacebo = async (req, res) => {
   try {
     const { pacientId } = req.params;
@@ -448,7 +447,7 @@ if (pacient.studyId) {
   }
 };
 
-// ✅ Doctor: remove pacient from the study (un-enroll)
+
 const removePacientFromStudy = async (req, res) => {
   try {
     const { pacientId } = req.params;
@@ -480,12 +479,12 @@ if (pacient.studyId) {
 };
 
 
-// ✅ Admin: list studies (with started flag)
+
 const getStudiesForAdmin = async (req, res) => {
-  return getStudies(req, res); // reuse same data
+  return getStudies(req, res); 
 };
 
-// ✅ Admin: start a study
+
 const startStudy = async (req, res) => {
   try {
     const { studyId } = req.params;

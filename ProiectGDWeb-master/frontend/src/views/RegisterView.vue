@@ -2,7 +2,7 @@
   <div class="register-page">
     <v-container class="py-12" style="max-width: 560px;">
       <v-card class="register-card" elevation="8">
-        <!-- Header -->
+      
         <div class="register-header">
           <div class="text-h5 font-weight-bold">Creare cont</div>
           <div class="text-body-2 register-subtitle">
@@ -131,18 +131,18 @@ export default {
           })
         });
 
-        // Try to parse JSON either way
+        
         const contentType = res.headers.get("content-type") || "";
         const data = contentType.includes("application/json")
           ? await res.json()
           : await res.text();
 
         if (!res.ok) {
-          // Express-validator format: { errors: [ { msg, ... } ] }
+         
           if (data && data.errors && Array.isArray(data.errors)) {
             throw new Error(data.errors.map(e => e.msg).join(", "));
           }
-          // Or your custom: { error: "..." }
+          
           throw new Error((data && data.error) || (data && data.message) || "Register failed");
         }
 
@@ -152,16 +152,16 @@ export default {
           window.dispatchEvent(new Event("auth-changed")); // 
         }
 
-        // optional: show message briefly (you can delete this if you want)
+        
         this.successMessage = `Account created for ${data.email || this.email}`;
 
-        // clear fields
+       
         this.name = "";
         this.email = "";
         this.password = "";
 
 
-        // go home
+       
         this.$router.push("/");
 
 

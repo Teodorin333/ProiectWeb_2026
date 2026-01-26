@@ -2,7 +2,7 @@
   <div class="login-page">
     <v-container class="py-12" style="max-width: 520px;">
       <v-card class="login-card" elevation="8">
-        <!-- Header -->
+        
         <div class="login-header">
           <div class="text-h5 font-weight-bold">Autentificare</div>
           <div class="text-body-2 login-subtitle">
@@ -109,22 +109,22 @@ export default {
           : await res.text();
 
         if (!res.ok) {
-          // Your backend might send { error: "..."} or { errors: [...] }
+          
           if (data && data.errors && Array.isArray(data.errors)) {
             throw new Error(data.errors.map(e => e.msg).join(", "));
           }
           throw new Error((data && data.error) || (data && data.message) || "Login failed");
         }
 
-        // Expecting something like: { token: "..." }
+        
         if (!data.token) throw new Error("No token returned from server.");
 
-        // Save token so you can use it later for protected endpoints
+        
         localStorage.setItem("token", data.token);
         window.dispatchEvent(new Event("auth-changed"));
 
 
-        // Redirect to home
+        
         this.$router.push("/");
       } catch (err) {
         this.errorMessage = err.message || "Login failed";
@@ -137,9 +137,9 @@ export default {
 </script>
 
 <style scoped>
-/* full-page soft background like the CRO vibe */
+
 .login-page {
-  min-height: calc(100vh - 64px); /* subtract app-bar height if needed */
+  min-height: calc(100vh - 64px); 
   display: flex;
   align-items: center;
   background:
@@ -148,14 +148,14 @@ export default {
     #f6f7fb;
 }
 
-/* modern card */
+
 .login-card {
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid rgba(30, 41, 59, 0.08);
 }
 
-/* top header area */
+
 .login-header {
   padding: 22px 24px 16px 24px;
   background: linear-gradient(180deg, rgba(101, 91, 129, 0.08), rgba(255, 255, 255, 0));
@@ -166,7 +166,7 @@ export default {
   margin-top: 4px;
 }
 
-/* primary button styling that matches your purple theme */
+
 .login-btn {
   background-color: #655b81;
   color: white;
@@ -179,7 +179,7 @@ export default {
   filter: brightness(0.95);
 }
 
-/* register row */
+
 .register-row {
   display: flex;
   gap: 8px;

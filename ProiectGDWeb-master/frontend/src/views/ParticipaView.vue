@@ -1,16 +1,16 @@
 <template>
   <v-container class="page py-10">
     <div class="shell">
-      <!-- Header -->
+      
       <div class="header">
-        <div class="kicker">Sanofi Clinical Portal</div>
+        <div class="kicker">Anofi Clinical Portal</div>
         <h2 class="title">Participă în Studiu</h2>
         <div class="subtitle">
           Completează datele pentru înscriere. Dacă ești deja într-un studiu început, vei primi instrucțiuni de la medic.
         </div>
       </div>
 
-      <!-- Alerts -->
+      
       <v-alert v-if="error" type="error" variant="tonal" class="mb-4">
         {{ error }}
       </v-alert>
@@ -19,7 +19,7 @@
         Datele au fost salvate.
       </v-alert>
 
-      <!-- Study started dialog -->
+      
       <v-dialog v-model="studyStartedDialog" max-width="700">
         <v-card class="dialog-card pa-4">
           <div class="text-h6">Studiu în desfășurare</div>
@@ -36,10 +36,10 @@
         </v-card>
       </v-dialog>
 
-      <!-- Main panel -->
+      
       <v-card class="panel" elevation="2">
         <v-form ref="formRef" v-model="formValid" class="mt-2">
-          <!-- Date of birth -->
+         
           <v-text-field
             v-model="dateOfBirth"
             label="Data nașterii"
@@ -48,7 +48,7 @@
             required
           />
 
-          <!-- Study dropdown -->
+          
           <v-select
             v-model="studyId"
             label="Studiul la care vrei să participi"
@@ -59,14 +59,14 @@
             required
           />
 
-          <!-- Allergies optional -->
+          
           <v-textarea
             v-model="allergies"
             label="Alergii (opțional)"
             rows="3"
           />
 
-          <!-- affected group (Yes/No) -->
+          
           <div class="mt-2">
             <div class="mb-2 font-weight-medium">Sufăr de această condiție</div>
 
@@ -93,10 +93,10 @@
             </v-row>
           </div>
 
-          <!-- terms -->
+          
           <v-checkbox
             v-model="acceptedTerms"
-            label="Sunt de acord cu Termenii și Condițiile Sanofi"
+            label="Sunt de acord cu Termenii și Condițiile Anofi"
             :rules="[rules.mustBeTrue]"
           />
 
@@ -199,7 +199,7 @@ export default {
       studyStartedName: "",
 
 
-      // form fields
+      
       dateOfBirth: "",
       studyId: "",
       allergies: "",
@@ -270,7 +270,7 @@ export default {
       headers: { Authorization: `Bearer ${token}` }
     });
 
-    // If it fails for any reason (404/401/500), just ignore silently
+    
     if (!res.ok) return;
 
     const data = await res.json();
@@ -284,14 +284,14 @@ export default {
     this.dateOfBirth = data.dateOfBirth || "";
     this.studyId = data.studyId || "";
     this.allergies = data.allergies || "";
-    // if saved before, convert boolean -> "yes"/"no"
+    
 if (typeof data.affectedGroup === "boolean") {
   this.affectedGroupChoice = data.affectedGroup ? "yes" : "no";
 }
 
     this.acceptedTerms = !!data.acceptedTerms;
   } catch (e) {
-    // Silently ignore
+    
   }
 },
 
@@ -327,7 +327,7 @@ const res = await fetch("http://localhost:3000/me/study", {
   })
 });
 
-// Read response safely (sometimes backend returns non-JSON on errors)
+
 const raw = await res.text();
 let data = {};
 try {
